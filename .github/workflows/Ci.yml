@@ -9,8 +9,9 @@ on:
       - master
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    
 
     steps:
       - name: Checkout code
