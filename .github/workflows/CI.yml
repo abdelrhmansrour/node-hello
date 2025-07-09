@@ -13,20 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Log in to GitHub Container Registry (GHCR)
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
 
-    - name: Build Docker image
-      run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/node-hello:latest .
+      - name: Install dependencies
+        run: npm install
 
-    - name: Push Docker image to GHCR
-      run: |
-        docker push ghcr.io/${{ github.repository_owner }}/node-hello:latest
+      - name: Lint the code
+        run: npm run lint
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/node-hello:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/node-hello:latest
